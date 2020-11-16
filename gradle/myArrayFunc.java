@@ -58,9 +58,9 @@ public class myArrayFunc {
 //        System.out.println();
 //        arr3.view();
 
-        myArray arr4 = new myArray(3,2);
-        myArray arr5 = new myArray(2,3);
-        myArray arr6 = new myArray(3,3);
+        myArray arr4 = new myArray(2,2);
+        myArray arr5 = new myArray(2,2);
+        myArray arr6 = new myArray(2,2);
         arr4.init();
         arr5.init();
         arr6.Mul(arr4,arr5);
