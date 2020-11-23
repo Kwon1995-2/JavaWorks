@@ -3,7 +3,7 @@ package com.tuyano.gradle2;
 import java.util.*;
 
 class Node { //constructor
-    private int num;
+    private int num; //data
     public Node next;
     //default constructor
     public Node() {this.num = (int)(Math.random()*10)+1; next=null;} // not right uses : (int)Math.random()*10+1
@@ -16,6 +16,8 @@ class Node { //constructor
 class List { //List a1 = new List();
     private Node first;
     //default constructor
+    public Node GetFirst() {return first;}
+    public void SetFirst(Node first) {this.first = first;}
     public List() {
        this.first = new Node();
     };
@@ -24,16 +26,38 @@ class List { //List a1 = new List();
         this.first = new Node(num);
     };
     //copy constructor --> retry
-//    public List(List l) {
-//        l=this;
-//    }
+    public List(List l) {
+        this.first = new Node(l.first.GetNum());
+        Node m = this.first;
+        Node p = l.first.next;
+        while(p != null) {
+            Node nd = new Node(p.GetNum());
+            m.next = nd;
+            m = nd;
+            p = p.next;
+        }
+    }
     //addList
+//    public List addList(List l) {
+//        Node temp = this.first;
+//        while(temp.next != null) {
+//            temp = temp.next;
+//        }
+//        temp.next = l.first.next;
+//        return this;
+//    };
     public List addList(List l) {
         Node temp = this.first;
         while(temp.next != null) {
             temp = temp.next;
         }
-        temp.next = l.first.next;
+        Node p = l.first.next; //only parameter copy constructor??
+        while(p !=null) {
+            Node nd = new Node(p.GetNum());
+            temp.next = nd;
+            temp = nd;
+            p = p.next;
+        }
         return this;
     };
     //addNode
@@ -165,36 +189,150 @@ class List { //List a1 = new List();
 
 }
 
+class ListIterator {
+    private List list;
+    private Node current;
+    public Node GetNode() {return current;}
+    ListIterator(List l) {this.list = l; current = l.GetFirst().next;}
+
+    public boolean NotNull() { //constructor only
+        if(current != null) {return true;}
+        else return false;
+    };
+    public boolean NextNotNull(){ //constructor next once only
+        if(current.next != null) {return true;}
+        else return false;
+    };
+
+//    public boolean NotNull(Node n) { //check current element in list is non-null
+//        if(n != null) return true;
+//        else return false;
+//    };
+//    public boolean NextNotNull(Node n){ //check next element in list is non-null
+//        if(n.next != null) return true;
+//        else return false;
+//    };
+
+    public int First() {
+        //Node p = new Node();
+        //p = current;
+        return current.GetNum();}; // stay
+    public int Next() {
+        current = current.next;
+        return current.GetNum();
+        };
+    //public Node First(Node n) {return n;};
+    //public Node Next(Node n) {return n.next;};
+
+    public void showListIterator() {
+//        Node temp = current;
+//        System.out.println(this.First().GetNum());
+//        while(temp != null) {
+//            //System.out.printf("node%d:%d  ", count, temp.GetNum());
+//            System.out.print("CNull:" + NotNull(temp) + ", NNull:" + NextNotNull(temp));
+//            System.out.println();
+//            if(temp.next != null) System.out.println(this.Next(temp).GetNum());
+//            temp = temp.next;
+//            //l.Next();
+//        }
+        Node temp = current;
+        System.out.println(this.First());
+        while(temp != null) {
+            //System.out.printf("node%d:%d  ", count, temp.GetNum());
+            System.out.print("CNull:" + this.NotNull() + ", NNull:" + this.NextNotNull());
+            System.out.println();
+            if(temp.next != null) System.out.println(Next());
+            temp = temp.next;
+            //l.Next();
+        }
+    };
+}
+
 public class cpp_linkedlist {
     public static Random rand = new Random();
+
     public static void MakeList(List l, int num) {
         int rnum;
-        if(num%2 == 0) rnum = 2;
-        else           rnum = 1;
+//        if(num%2 == 0) rnum = 2;
+//        else           rnum = 1;
         for(int i=0;i<num;i++) {
-            //rnum = rand.nextInt(10) + 1;
+            rnum = rand.nextInt(10) + 1;
             //l.addNode();
             l.addNode(rnum);
             //l.addNode2(rnum);
-            rnum += 2;
+//            rnum += 2;
         }
+    }
+
+    public static int sum(ListIterator lit) {
+        int sum = lit.First();
+        while(lit.NextNotNull()){
+           sum += lit.Next();
+        }
+        return sum;
+    }
+
+    public static int max(ListIterator lit) {
+        int mx = lit.First();
+        int buf;
+        while(lit.NextNotNull()) {
+            buf = lit.Next();
+            if(buf >= mx) mx = buf;
+        }
+        return mx;
+    }
+
+    public static int min(ListIterator lit) {
+        int mn = lit.First();
+        int buf;
+        while(lit.NextNotNull()) {
+            buf = lit.Next();
+            if(buf <= mn) mn = buf;
+        }
+        return mn;
+    }
+
+    public static float mean(ListIterator lit) {
+        int sum = lit.First();
+        int count = 0;
+        while(lit.NextNotNull()){
+            sum += lit.Next();
+            count++;
+        }
+        return sum/count;
+    }
+
+    public static List[] split(List[] l, List[] r) {
+        List [] al = new List[size];
+        Node p = l.GetFirst().next;
+        for(int i=0;i<size;i++)
+        {
+            al[i].SetFirst(p);
+            System.out.println(p.GetNum());
+            p = p.next;
+        }
+        return al;
     }
 
     public static void main(String[] args) {
         List a1 = new List(); //reference variable : a1 <- address
-        List a2 = new List();
-        MakeList(a1, 10); //10: number of Node
-        MakeList(a2,5);
+        //List a2 = new List();
+        //MakeList(a1, 10); //10: number of Node
+        //MakeList(a2,5);
+        MakeList(a1, 8);
         a1.showList();
         System.out.println();
+        split(a1,a3);
+//        a2.showList();
+//        System.out.println();
 
-        a2.showList();
-        System.out.println();
-
-//        addList test
-//        a1.addList(a2).showList();
+        //addList test
+        //a1.addList(a2).showList();
 //        List a3 = a1.addList(a2);
 //        a3.showList();
+//        System.out.println();
+//        List a4 = new List(a1); //copy constructor
+//        a4.showList();
 //        System.out.println();
 
         //mergeList test;
@@ -204,16 +342,24 @@ public class cpp_linkedlist {
 //        List a5 = a2.mergeList(a1);
 //        a5.showList();
 
-
         //mergesortList test
-        List a6 = a1.mergesortList(a2);
-        a6.showList();
+        //List a6 = a1.mergesortList(a2);
+        //a6.showList();
 //        List a7 = a2.mergesortList(a1);
 //        a7.showList();
 
+        //ListIterator
+        //ListIterator al1 = new ListIterator(a6);
+        //al1.showListIterator(); // --> current moving to last --> sum --> last value only
+        //int result = sum(al1);
+        //int result = max(al1);
+        //int result = min(al1);
+        //float result = mean(al1);
+        //System.out.println(al1.First());
+        //System.out.println("ListIterator sum : "+result);
+        //System.out.println(al1.First());
+        //copy constructor
 //        List a5;
 //        a5 = a4;
-
     }
-
 }
