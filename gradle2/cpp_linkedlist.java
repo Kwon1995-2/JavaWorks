@@ -274,7 +274,7 @@ class List { //List a1 = new List();
         for (int i = 0; i < l.length; i = i + 2) {
             if(l[i] != null ) {
                 if(l[i+1] == null) ll[i/2] = l[i];
-                else ll[(int)i/2] = new List(l[i].Sort(l[i+1]));
+                else ll[(int)i/2] = l[i].Sort(l[i+1]);
             }
             //ll[i/2] = l[i].mergesortList(l[i+1]);
             //ll[i/2] = new List(ll[i/2].Sort());
@@ -283,54 +283,131 @@ class List { //List a1 = new List();
     };
 
     public List Sort(List l) {
-        Node p; Node pf;
-        Node q; Node qf;
-        Node ret;
-        int decision = 0;
-        //bigger number setting
+        List ll = new List(this.first.GetNum());
+        Node me; Node you;
+        Node me2; Node you2;
+        int size = this.GetCount();
+        ////////////////////////////////////////////////////////////////////////
         if (this.first.next.GetNum() <= l.first.next.GetNum()) {
-            p = this.first.next; ret = p;
-            q = l.first.next;
+            me = this.first.next; ll.addNode2(me.GetNum()); //System.out.print(me.GetNum());
+            you = l.first.next;
         } else {
-            p = l.first.next; ret = p;
-            q = this.first.next;
-            decision = 1;
+            me = l.first.next; ll.addNode2(me.GetNum()); //System.out.print(me.GetNum());
+            you = this.first.next;
+            //decision = 1;
         }
-        pf = p;
-        qf = q;
+        ////////////////////////////////////////////////////////////////////////
         do {
-            if(ret == p) {
-                if (pf.GetNum() <= q.GetNum()) {
-                    pf = p;
-                    p = p.next;
-                    if (p == null) {
-                        p.next = q;
-                        break;
-                    }
-                } else {
-                    pf = p;
-                    p = p.next;
-                    ret.next = q;
-                    ret = q;
-                    }
-                } else if(ret == q) {
-                if (qf.GetNum() <= p.GetNum()) {
-                    qf = q;
-                    q = q.next;
-                    if (pf == null) {
-                        p.next = q;
-                        break;
-                    }
-                } else {
-                    q = qf; qf = qf.next;
-                    ret.next = p;
-                    ret = p;
-                    }
+            if(size == 1) { //Node of List : one
+                me.next = you;
+                ll.addNode2(you.GetNum());
+                //System.out.print("f"+you.GetNum());
+                break;
+            }
+           if(me.next.GetNum() < you.GetNum()) {
+              me2 = me;
+              me = me.next;
+              ll.addNode2(me.GetNum());
+              //System.out.print(me.GetNum());
+              you2 = you;
+           } else { //me.next.GetNum() >= you.GetNum()
+              me2 = me;
+              you2= you;
+              ll.addNode2(you.GetNum());
+              //System.out.print(you.GetNum());
+              //me.next = you; --> fix
+              me = you2;
+              you = me2.next;
+              me2.next = you2;
+           }
+            if(me.next == null) {
+                me.next = you;
+                if(you.next == null) {
+                    ll.addNode2(you.GetNum());
+                    //System.out.print("f"+you.GetNum());
                 }
-            }while (qf != null);
-        if (decision == 1) return l;
-        else return this;
+                else if(you.next != null) {
+                    ll.addNode2(you.GetNum());
+                    ll.addNode2(you.next.GetNum());
+                    //System.out.print("f"+you.GetNum());
+                    //System.out.print("f"+you.next.GetNum());
+                }
+                break;
+            }
+        } while(me.next != null);
+
+//        if (decision == 1) return l;
+//        else return this;
+        return ll;
     };
+
+
+//    public List Sort(List l) { // --> only minimum output
+//        List ll = new List(this.first.GetNum());
+//        int size1 = this.GetCount();
+//        int size2 = l.GetCount();
+//        Node p; Node pf;
+//        Node q; Node qf;
+//        Node ret;
+//        //int decision = 0;
+//        //bigger number setting
+//        if (this.first.next.GetNum() <= l.first.next.GetNum()) {
+//            p = this.first.next; ll.addNode2(p.GetNum());
+//            q = l.first.next;
+//        } else {
+//            p = l.first.next; ll.addNode2(p.GetNum());
+//            q = this.first.next;
+//            //decision = 1;
+//        }
+//        pf = p.next;
+//        qf = q.next;
+//        ret = p; //Benchmark
+//        do { //ret.next != null
+//            if(ret == p) { //A List has only one node
+//                if(size1 == 1) {
+//                    ll.addNode2(q.GetNum());
+//                    p.next = q;
+//                    break;
+//                }
+//                // A List has several nodes
+//                if(pf.GetNum() < q.GetNum()) {
+//                    ll.addNode2(pf.GetNum());
+//                    p = pf;
+//                    ret = p;
+//                    pf = pf.next;
+//                } else {
+//                    ll.addNode2(q.GetNum());
+//                    ret.next = q;
+//                    ret = q;
+//                    //q= qf; qf = qf.next;
+//                    p = pf; pf = pf.next;
+//                }
+//            } else if(ret == q) {
+//                if(size2 == 1) {
+//                    ll.addNode2(q.GetNum());
+//                    q.next = p;
+//                    break;
+//                }
+//                if(qf.GetNum() < p.GetNum()) {
+//                    ll.addNode2(qf.GetNum());
+//                    q = qf;
+//                    ret = q;
+//                    qf = qf.next;
+//                } else {
+//                    ll.addNode2(p.GetNum());
+//                    ret.next = p;
+//                    p = pf;
+//                    ret = p;
+//                    //p = pf; pf = pf.next;
+//                    q= qf; qf = qf.next;
+//                }
+//            }
+//        } while(ret.next != null);
+//
+////        if (decision == 1) return l;
+////        else return this;
+//        return ll;
+//    };
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
