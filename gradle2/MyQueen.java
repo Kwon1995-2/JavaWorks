@@ -6,11 +6,12 @@ public class MyQueen {
 
     private int size;
     private int[] array;
-    //int cnt;
+    Stack<Integer> stack;
 
     public MyQueen(int size) {
         this.size = size;
         array = new int[size*size];
+        stack = new Stack<Integer>();
     }
     public void printQ() {
         //int size = (int)(Math.sqrt(array.length));
@@ -22,30 +23,48 @@ public class MyQueen {
             System.out.print("\n");
         }
     }
+    public void init() {
+        for(int i=0;i<size*size;i++)
+            array[i] = 0;
+    }
+
     public void backTracking(int start) {
-        if(start == size*size) {
-            //cnt = 0;
+        if(stack.size() == size) {
+            stack.clear();
             this.printQ();
+            this.init();
             return;
         }
 
-        for(int i=start;i<start + size;i=i++) { //4
+        for(int i=0;i<2;i++) { //4
+            if(start >= size*size) {
+                return;
+            }
+            stack.push(start);
             if(isValid(start)) {
-                if(start == size*size) return;
                 array[start]=1;
+                if(start/size == 0) start = 0;
+                else if(start/size ==1) start = 4;
+                else if(start/size == 2) start = 8;
+                else if(start/size == 3) start = 12;
                 this.backTracking(start+size);
+            } else {
+                int idx = stack.pop();
+                array[idx] = 0;
+                this.backTracking(start+1);
             }
         }
     }
 
     public boolean isValid(int idx) {
-        for(int i=0;i%size != idx%size;i++) {
-            if (idx%size == (i-size)%size || Math.abs(idx-size-1)%size == (i-size)%size || Math.abs(idx-size+1)%size == (i-size)%size){
+        for(int i=0;i < idx;i++) {
+            if(i >= size*size) return false;
+            if ( (i/size == idx/size && array[i/size] == 1) || (i%size == idx%size && array[i%size] == 1) ||
+                    (i%(size-1)==idx%(size-1) && array[i] == 1) || (i%(size+1)==idx%(size+1) && array[i] == 1) ){
                 //System.out.print("idx:"+idx+",i:"+(i-size)+" ");
                 return false;
             }
         }
-        //cnt++;
         return true;
     }
 
